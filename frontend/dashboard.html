@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    /* Style for the user name in the table */
+table td:nth-child(2) {
+  font-weight: bold; /* Makes the name bold */
+}
+/* Style for the user name in bold */
+.user-name {
+  font-weight: bold; /* Makes the name bold */
+}
+
+/* Style for the company name (normal text) */
+.company-name {
+  font-weight: normal; /* Ensures the company name is normal */
+}
+
+
+
+    #logout-btn {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    #logout-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .controls-container {
+       justify-content: center; 
+       width: 93%;
+      /* background-color: #fffdfd; */
+      /* border-radius: 8px; */
+      /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+      /* padding: 5px; */
+       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 3%; 
+    }
+
+    .filter-box {
+  margin-left: -5px;
+}
+
+
+    .filter-box input {
+      width: 250px;
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .status-active {
+  color: green;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: bold;
+}
+
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-left: 2%;
+    }
+
+    .action-buttons button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: white;
+      color: black;
+      font-weight: bold;
+      transition: border-color 0.3s ease;
+      min-width: 50px;
+      height: 50px;
+      border: 2px solid rgb(10, 38, 254);
+    }
+    .action-buttons .delete-btn {
+  border-color: red; /* Red border for delete button */
+}
+
+    .action-buttons img {
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+      padding: 5px;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+
+    .action-buttons img:hover {
+      border-color: #0369f8;
+    }
+    .delete-btn img {
+      width: 20px;
+      height: 20px;
+    }
+    .unblock-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .block-btn {
+    font-size: 20px;
+      width: 100px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgb(21, 21, 21);
+      background-color: white;
+      transition: transform 0.3s ease;
+    }
+
+    .block-btn:hover {
+      transform: scale(1.1);
+      border-color: #0369f8;
+    }
+    .delete-btn:hover {
+      transform: scale(1.1);
+      border-color: #fd5c05;
+    }
+    .unblock-btn:hover {
+      transform: scale(1.1);
+      border-color: #0369f8;
+    }
+
+    table {
+      margin: 0 auto;
+      width: 90%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-left: 200px;
+  margin-right: 200px;
+  padding: 20px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  background-color: #124c8a;
+  box-shadow: 
+    inset 0 0 0 5px white, /* Inner white border */
+    0 4px 8px rgba(0, 0, 0, 0.1); /* Outer shadow */
+  border: 2px solid #f31111;
+  border-radius: 10px;
+  
+}
+
+    /* Adjusting the company name positioning */
+    .company-name {
+      display: block;
+      font-size: 14px;
+      color: #555;
+      margin-top: 5px;
+    }
+    .block-btn i {
+  margin-right: 5px; /* Add space between the icon and the text */
+  font-size: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <h2>Dashboard</h2>
+
+  <div class="controls-container">
+    <div class="action-buttons">
+      <button class="block-btn" id="block-selected" style="font-size: 18px;" title="Block">
+        <i class="fa fa-lock"></i> Block
+      </button>
+      <button class="unblock-btn" id="unblock-selected" title="Unblock">
+        <img src="images/unlock.png" alt="Unlock Icon">
+      </button>
+      <button class="delete-btn" id="delete-selected" title="Delete">
+        <img src="images/trash.png" alt="Delete Icon">
+      </button>
+    </div>
+  
+    <!-- Filter Box -->
+  <div class="filter-box" style="flex-grow: 1; text-align: right;">
+    <input type="text" id="user-search" placeholder="Search by name or email..." style="width: 100%;position: relative;left: -1%; max-width: 200px; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ddd; margin-left:30%;">
+  </div>
+</div>
+    
+    
+  </div>
+
+  <table>
+    <td>
+      <span class="user-name">${user.name}</span><br>
+      <span class="company-name">${user.company}</span>
+    </td>
+    <thead>
+      <tr>
+        <th><input type="checkbox" id="select-all"></th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Last Login</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be dynamically inserted here -->
+    </tbody>
+    
+  </table>
+
+  <button id="logout-btn">Logout</button>
+
+  <script>
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+
+    const fetchUsers = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/auth/users', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        const data = await response.json();
+        populateUserTable(data);
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+    
+
+    const populateUserTable = (users) => {
+      const tableBody = document.querySelector('table tbody');
+      tableBody.innerHTML = '';
+
+      users.forEach(user => {
+        const statusClass = user.status === 'active' ? 'status-active' : 'status-inactive';
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="checkbox" class="user-checkbox" data-id="${user.id}"></td>
+          <td>${user.name}<span class="company-name">${user.company}</span></td>
+          <td>${user.email}</td>
+          <td>${user.last_login ? moment(user.last_login).fromNow() : 'Never'}</td>
+          <td><span class="${statusClass}">${user.status}</span></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    };
+
+    const searchUsers = () => {
+      const searchTerm = document.getElementById('user-search').value.toLowerCase();
+      const rows = document.querySelectorAll('table tbody tr');
+
+      rows.forEach(row => {
+        const nameCell = row.cells[1].textContent.toLowerCase();
+        const emailCell = row.cells[2].textContent.toLowerCase();
+
+        if (nameCell.includes(searchTerm) || emailCell.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    };
+
+    document.getElementById('user-search').addEventListener('input', searchUsers);
+
+    const performAction = async (action) => {
+      const token = localStorage.getItem('token');
+      const selectedUsers = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+        .map(checkbox => checkbox.dataset.id);
+
+      if (selectedUsers.length === 0) {
+        alert(`No users selected to ${action}`);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to ${action} the selected users?`)) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/auth/${action}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ userIds: selectedUsers }),
+        });
+
+        if (!response.ok) throw new Error(`Failed to ${action} users`);
+
+        alert(`${action.charAt(0).toUpperCase() + action.slice(1)} operation successful`);
+        fetchUsers();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    document.getElementById('select-all').addEventListener('change', (e) => {
+      document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+      });
+    });
+
+    document.getElementById('delete-selected').addEventListener('click', () => {
+      performAction('delete');
+    });
+
+    document.getElementById('block-selected').addEventListener('click', () => {
+      performAction('block');
+    });
+
+    document.getElementById('unblock-selected').addEventListener('click', () => {
+      performAction('unblock');
+    });
+
+    fetchUsers();
+  </script>
+</body>
+</html>

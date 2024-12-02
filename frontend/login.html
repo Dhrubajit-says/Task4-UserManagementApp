@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+  /* Image Section for Login Page */
+    .container.login .image-section {
+      background-image: url('images/login.jpg');
+      background-position: center;
+    }</style>
+</head>
+<body>
+  <div class="container login">
+    <!-- Left Side: Form Section -->
+    <div class="form-section">
+      <div class="logo-container">
+        <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;font-weight: bold;
+        color: white; /* Inside color of the text */
+        -webkit-text-stroke: 2px rgb(22, 113, 241);">DASH SPHERE <br> Manage & Monitor</h1>
+      </div>
+      
+      <h2>Login to your account</h2>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Login</button>
+      </form>
+      <p class="signup-link">New user? <a href="registration.html">Sign up</a></p>
+    </div>
+
+    <!-- Right Side: Image Section -->
+    <div class="image-section"></div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        window.location.href = 'dashboard.html'; // This redirects to dashboard
+      } else {
+        alert('Login failed: ' + data.error);
+      }
+    });
+  </script>
+</body>
+</html>

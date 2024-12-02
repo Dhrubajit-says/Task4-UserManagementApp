@@ -1,0 +1,84 @@
+<!-- frontend/dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h1>Welcome to the Dashboard</h1>
+
+<h2>User List</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Email</th>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Registration Time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="usersTable">
+    <% users.forEach(function(user) { %>
+    <tr>
+      <td><%= user.id %></td>
+      <td><%= user.email %></td>
+      <td><%= user.name %></td>
+      <td><%= user.status %></td>
+      <td><%= user.registration_time %></td>
+      <td>
+        <% if(user.status === 'active') { %>
+          <button onclick="blockUser('<%= user.id %>')">Block</button>
+        <% } else { %>
+          <button onclick="unblockUser('<%= user.id %>')">Unblock</button>
+        <% } %>
+        <button onclick="deleteUser('<%= user.id %>')">Delete</button>
+      </td>
+    </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<script>
+// JavaScript for user actions
+function blockUser(userId) {
+    fetch(`http://localhost:3000/auth/block/${userId}`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+    }).then(response => response.json())
+      .then(data => alert(data.message || data.error));
+}
+
+function unblockUser(userId) {
+    fetch(`http://localhost:3000/auth/unblock/${userId}`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+    }).then(response => response.json())
+      .then(data => alert(data.message || data.error));
+}
+
+function deleteUser(userId) {
+    if (confirm("Are you sure you want to delete this user?")) {
+        fetch('http://localhost:3000/auth/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({ userIds: [userId] }),
+        }).then(response => response.json())
+          .then(data => alert(data.message || data.error));
+    }
+}
+</script>
+
+</body>
+</html>

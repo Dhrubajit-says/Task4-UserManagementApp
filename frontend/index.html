@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+ 
+<body>
+    <div class="container">
+        <!-- Left Side: Form Section -->
+        <div class="form-section">
+            <div class="logo-container">
+                <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;font-weight: bold;
+                color: white; /* Inside color of the text */
+                -webkit-text-stroke: 2px rgb(22, 113, 241);">DASH SPHERE <br> Manage & Monitor</h1>
+              </div>
+            <h2>Login to your account</h2>
+            
+            <form id="loginForm">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Email" required />
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Password" required />
+                <button type="submit">Login</button>
+            </form>
+            <p>New user? <a href="registration.html">Register here</a></p>
+        </div>
+
+        <!-- Right Side: Image Section -->
+        <div class="image-section"></div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get the user inputs from the form
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Send login credentials to the server
+            const response = await fetch('http://localhost:3000/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // If login is successful, store the token and redirect to the dashboard
+                localStorage.setItem('token', data.token);
+                // alert('Login successful!');
+                window.location.href = 'dashboard.html';  // Redirect to the dashboard page
+            } else {
+                // If login fails, display an error message
+                alert('Login failed: ' + data.error);
+            }
+        });
+    </script>
+</body>
+</html>
